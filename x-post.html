@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Multi-Model Review Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Instrument+Serif&family=DM+Sans:wght@400;500;600;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #08080c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'DM Sans', sans-serif;
+    padding: 40px 20px;
+  }
+
+  .card {
+    width: 620px;
+    background: linear-gradient(165deg, #0f0f18 0%, #0a0a12 100%);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 20px;
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 1px rgba(255,255,255,0.03),
+      0 20px 60px rgba(0,0,0,0.5),
+      0 0 120px rgba(99,102,241,0.04);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent 0%,
+      rgba(129,140,248,0.4) 20%,
+      rgba(59,130,246,0.5) 50%,
+      rgba(14,165,233,0.4) 80%,
+      transparent 100%
+    );
+  }
+
+  .header {
+    padding: 32px 32px 24px;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: #6366f1;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .eyebrow::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #6366f1;
+    border-radius: 2px;
+    display: inline-block;
+  }
+
+  .title {
+    font-family: 'Instrument Serif', serif;
+    font-size: 30px;
+    font-weight: 400;
+    color: #f0f0ff;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    letter-spacing: -0.02em;
+  }
+
+  .title em {
+    font-style: italic;
+    color: #818cf8;
+  }
+
+  .subtitle {
+    color: #4a4a6a;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 20%, rgba(255,255,255,0.06) 80%, transparent);
+    margin: 0 32px;
+  }
+
+  .insight {
+    padding: 18px 32px;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+  }
+
+  .insight-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: rgba(99,102,241,0.1);
+    border: 1px solid rgba(99,102,241,0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .insight-text {
+    font-size: 12.5px;
+    color: #7a7a9a;
+    line-height: 1.65;
+  }
+
+  .insight-text strong {
+    color: #a5b4fc;
+    font-weight: 600;
+  }
+
+  .table-section { padding: 4px 0 0; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    color: #2e2e45;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    font-weight: 600;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  thead th:first-child { padding-left: 32px; }
+  thead th:last-child { padding-right: 32px; }
+
+  tbody tr {
+    border-bottom: 1px solid rgba(255,255,255,0.025);
+    transition: background 0.15s;
+  }
+
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.015); }
+
+  td { padding: 12px 16px; vertical-align: middle; }
+  td:first-child { padding-left: 32px; }
+  td:last-child { padding-right: 32px; }
+
+  .num {
+    color: #2a2a40;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    width: 20px;
+  }
+
+  .model-name { font-weight: 700; font-size: 12.5px; }
+
+  .m-gpt      { color: #34d399; }
+  .m-sonnet   { color: #a78bfa; }
+  .m-grok     { color: #fbbf24; }
+  .m-deepseek { color: #60a5fa; }
+  .m-gemini   { color: #f472b6; }
+  .m-kimi     { color: #c084fc; }
+  .m-minimax  { color: #2dd4bf; }
+
+  .provider { color: #3a3a55; font-size: 11px; }
+  .model-id { font-family: 'IBM Plex Mono', monospace; color: #3a3a55; font-size: 10px; }
+  .cost-cell { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #3a3a55; }
+
+  .footer {
+    padding: 20px 32px;
+    border-top: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .cost-badge-wrap { display: flex; align-items: center; gap: 10px; }
+
+  .cost-badge {
+    background: rgba(16,185,129,0.08);
+    border: 1px solid rgba(16,185,129,0.2);
+    color: #10b981;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    padding: 5px 12px;
+    border-radius: 8px;
+  }
+
+  .cost-label { color: #3a3a55; font-size: 11px; }
+
+  .tags { display: flex; gap: 6px; }
+
+  .tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+
+  .tag-green  { color: #10b981; border-color: rgba(16,185,129,0.2); background: rgba(16,185,129,0.06); }
+  .tag-blue   { color: #6366f1; border-color: rgba(99,102,241,0.2); background: rgba(99,102,241,0.06); }
+  .tag-cyan   { color: #06b6d4; border-color: rgba(6,182,212,0.2); background: rgba(6,182,212,0.06); }
+
+  .bottom-note {
+    padding: 0 32px 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: #2a2a40;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="header">
+    <div class="eyebrow">Claude Code Workflow</div>
+    <div class="title">Stop burning tokens.<br>Use a <em>7-model review panel.</em></div>
+    <div class="subtitle">After planning, fan out to 7 cheap models in parallel via OpenRouter.<br>One always catches the bug. Total cost: 8–10 cents per round.</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="insight">
+    <div class="insight-icon">⚡</div>
+    <div class="insight-text">
+      Claude Code plans & writes → <strong>7 models review in parallel</strong> (~5 sec) →
+      Opus reads the synthesis, says <strong>"how did I not see this"</strong>, and fixes it.
+      One OpenRouter key. No extra setup.
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="table-section">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Model</th>
+          <th>Provider</th>
+          <th>OpenRouter ID</th>
+          <th>$/M in</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="num">1</td>
+          <td class="model-name m-gpt">GPT-5.4 Mini</td>
+          <td class="provider">OpenAI</td>
+          <td class="model-id">openai/gpt-5.4-mini</td>
+          <td class="cost-cell">$0.75</td>
+        </tr>
+        <tr>
+          <td class="num">2</td>
+          <td class="model-name m-sonnet">Sonnet 4.6</td>
+          <td class="provider">Anthropic</td>
+          <td class="model-id">anthropic/claude-sonnet-4-6</td>
+          <td class="cost-cell">$3.00</td>
+        </tr>
+        <tr>
+          <td class="num">3</td>
+          <td class="model-name m-grok">Grok 4.1 Fast</td>
+          <td class="provider">xAI</td>
+          <td class="model-id">x-ai/grok-4.1-fast</td>
+          <td class="cost-cell">$0.20</td>
+        </tr>
+        <tr>
+          <td class="num">4</td>
+          <td class="model-name m-deepseek">DeepSeek V3.2</td>
+          <td class="provider">DeepSeek</td>
+          <td class="model-id">deepseek/deepseek-v3.2</td>
+          <td class="cost-cell">$0.25</td>
+        </tr>
+        <tr>
+          <td class="num">5</td>
+          <td class="model-name m-gemini">Gemini 3 Flash</td>
+          <td class="provider">Google</td>
+          <td class="model-id">google/gemini-3-flash-preview</td>
+          <td class="cost-cell">$0.50</td>
+        </tr>
+        <tr>
+          <td class="num">6</td>
+          <td class="model-name m-kimi">Kimi K2.6</td>
+          <td class="provider">Moonshot</td>
+          <td class="model-id">moonshotai/kimi-k2.6</td>
+          <td class="cost-cell">$0.74</td>
+        </tr>
+        <tr>
+          <td class="num">7</td>
+          <td class="model-name m-minimax">MiniMax M2.7</td>
+          <td class="provider">MiniMax</td>
+          <td class="model-id">minimax/minimax-m2.7</td>
+          <td class="cost-cell">$0.30</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <div class="cost-badge-wrap">
+      <div class="cost-badge">~$0.08</div>
+      <div class="cost-label">per full review round</div>
+    </div>
+    <div class="tags">
+      <span class="tag tag-green">1 API key</span>
+      <span class="tag tag-blue">↑ accuracy</span>
+      <span class="tag tag-cyan">↓ quota</span>
+    </div>
+  </div>
+
+  <div class="bottom-note">
+    github.com/multi-model-review · MIT License
+  </div>
+</div>
+</body>
+</html>
