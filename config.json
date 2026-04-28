@@ -1,0 +1,20 @@
+{
+  "_comment": "This is YOUR config. Edit freely. Run 'npm run configure' for an interactive picker.",
+  "_docs": "https://github.com/YOUR_USERNAME/multi-model-review#configuration",
+
+  "activeModels": [
+    "gpt-5.4-mini",
+    "claude-sonnet-4-6",
+    "grok-4.1-fast",
+    "deepseek-v3.2",
+    "gemini-3-flash",
+    "kimi-k2.6",
+    "minimax-m2.7"
+  ],
+
+  "settings": {
+    "timeoutMs": 30000,
+    "maxResponseTokens": 1000,
+    "maxInputChars": 100000
+  }
+}

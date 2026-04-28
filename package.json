@@ -1,0 +1,21 @@
+{
+  "name": "multi-model-review",
+  "version": "2.0.0",
+  "description": "MCP server that fans out code reviews to multiple AI models in parallel. Fully configurable. For Claude Code.",
+  "type": "module",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "configure": "node scripts/configure.js",
+    "test": "node --test src/test.js"
+  },
+  "keywords": [
+    "claude-code", "mcp", "code-review", "openrouter",
+    "ai", "multi-model", "llm", "developer-tools"
+  ],
+  "license": "MIT",
+  "engines": { "node": ">=18.0.0" },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.0.0"
+  }
+}
