@@ -9,6 +9,8 @@ One API key. Fully configurable panel. Catches the bugs your primary model misse
 
 Different models have different blind spots. Running 5–7 in parallel takes the same time as running 1, and at least one will catch the issue that others miss. Each round costs a few cents — far cheaper than a debugging loop with a flagship model.
 
+![Multi-Model Review Panel](screenshot.png)
+
 ---
 
 ## Quick Start
